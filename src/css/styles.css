@@ -544,31 +544,6 @@ section {
   margin-bottom: 20px;
 }
 
-.discount-card {
-  text-align: left;
-}
-
-.discount-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: #0b0f1a;
-  background: linear-gradient(120deg, #facc15, #f97316);
-  margin-bottom: 14px;
-}
-
-.discount-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
 .modal-close {
   position: absolute;
   top: 18px;

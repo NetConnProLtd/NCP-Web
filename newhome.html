@@ -354,23 +354,6 @@
       </div>
     </div>
 
-    <div class="modal" id="discount-modal" aria-hidden="true">
-      <div class="modal-overlay" data-discount-close></div>
-      <div class="modal-card discount-card" role="dialog" aria-modal="true" aria-labelledby="discount-modal-title">
-        <button class="modal-close" type="button" data-discount-close aria-label="Close discount offer">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <span class="discount-tag">Limited offer</span>
-        <h2 id="discount-modal-title">Save 20% on select CCTV and security systems</h2>
-        <p>
-          Sign up this month and lock in a 20% discount on premium CCTV and security solutions to keep your home safe.
-        </p>
-        <div class="discount-actions">
-          <button class="primary-btn" data-contact-modal>Claim discount</button>
-          <button class="ghost-btn" type="button" data-discount-close>Maybe later</button>
-        </div>
-      </div>
-    </div>
 
     <footer class="footer scroll-animate">
       <div class="scroll-animate">
@@ -481,41 +464,6 @@
           closeContactModal();
         }
       });
-
-      const discountModal = document.getElementById("discount-modal");
-      const discountCloseTargets = discountModal.querySelectorAll("[data-discount-close]");
-
-      const openDiscountModal = () => {
-        discountModal.classList.add("is-visible");
-        discountModal.setAttribute("aria-hidden", "false");
-        document.body.classList.add("modal-open");
-      };
-
-      const closeDiscountModal = () => {
-        discountModal.classList.remove("is-visible");
-        discountModal.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("modal-open");
-      };
-
-      discountCloseTargets.forEach((target) =>
-        target.addEventListener("click", closeDiscountModal)
-      );
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && discountModal.classList.contains("is-visible")) {
-          closeDiscountModal();
-        }
-      });
-
-      const hasSeenDiscount = sessionStorage.getItem("discountModalSeen");
-      if (!hasSeenDiscount) {
-        window.setTimeout(() => {
-          if (!discountModal.classList.contains("is-visible")) {
-            openDiscountModal();
-            sessionStorage.setItem("discountModalSeen", "true");
-          }
-        }, 1400);
-      }
 
       const contactForm = document.querySelector(".modal-form");
       const contactSubmit = contactForm?.querySelector("button[type='submit']");
