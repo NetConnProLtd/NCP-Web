@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NetConn Pro - Support</title>
+    <title>Support - NetConn Pro</title>
+    <meta name="description" content="NetConn Pro support resources. Remote support access and self-service help for home and business customers." />
     <link rel="stylesheet" href="src/css/styles.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,48 +12,170 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <style>
+      .faq { max-width: 780px; margin: 0 auto; display: grid; gap: 16px; }
+      .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px; }
+      .faq-item h3 { margin-bottom: 8px; font-size: 1rem; }
+      .faq-item p { color: var(--muted); font-size: 0.95rem; }
+      .contact-options { max-width: 780px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+      .contact-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 24px; text-align: center; }
+      .contact-card h3 { margin-bottom: 8px; }
+      .contact-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+      .contact-card a { color: var(--accent); font-weight: 600; }
+    </style>
   </head>
   <body>
-    <main>
-      <section class="hero" style="min-height: 100vh; display: flex; align-items: center;">
+    <a class="skip-to-content" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <nav class="nav">
+        <a href="index.html">
+          <img class="logo" src="src/img/logo.png" alt="NetConn Pro" />
+        </a>
+        <div class="nav-links">
+          <a href="index.html#services">Services</a>
+          <a href="index.html#about">About</a>
+          <a href="business.html">Business</a>
+          <a href="index.html#contact">Contact</a>
+          <a href="support.html">Support</a>
+        </div>
+        <button class="nav-cta" data-contact-modal>Contact us</button>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero scroll-animate">
         <div class="hero-content">
           <div class="eyebrow">Support</div>
-          <h1>Support Resources</h1>
+          <h1>We're here when you need us</h1>
           <p>
-            Use the button below to receive support.<br><br>Please only run this file if you have been asked to by a NetConn Pro engineer.
+            Use the resources below to get help quickly. For urgent issues, call or email us directly and we'll respond as fast as we can.
           </p>
           <div class="hero-actions">
-            <a href="agent.exe" class="primary-btn" role="button">Get Support</a>
-            <a href="index.html" class="ghost-btn" role="button">Back to home</a>
+            <button class="primary-btn" data-contact-modal>Contact support</button>
+            <a href="#remote-support"><button class="ghost-btn">Remote access</button></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="services scroll-animate">
+        <div class="section-title scroll-animate">
+          <h2>Get in touch</h2>
+          <p>Choose the best way to reach us.</p>
+        </div>
+        <div class="contact-options scroll-animate">
+          <div class="contact-card scroll-animate">
+            <h3>Email</h3>
+            <p>Send us a message any time. We reply within one business day.</p>
+            <a href="mailto:hello@netconn.pro">hello@netconn.pro</a>
+          </div>
+          <div class="contact-card scroll-animate">
+            <h3>Phone</h3>
+            <p>Call us during business hours for urgent support.</p>
+            <a href="tel:+447706943666">+44 7706 943666</a>
+          </div>
+          <div class="contact-card scroll-animate">
+            <h3>Contact form</h3>
+            <p>Describe your issue and we'll follow up with a solution.</p>
+            <button class="secondary-btn" data-contact-modal style="border:none;cursor:pointer;">Open form</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="process scroll-animate" id="remote-support">
+        <div class="section-title scroll-animate">
+          <h2>Remote support access</h2>
+          <p>
+            If a NetConn Pro engineer has asked you to start a remote support session, use the button below to download the support agent.
+          </p>
+        </div>
+        <div class="process-steps">
+          <div class="scroll-animate">
+            <span>01</span>
+            <h4>Confirm first</h4>
+            <p>Only download this file if a NetConn Pro engineer has asked you to during an active support session.</p>
+          </div>
+          <div class="scroll-animate">
+            <span>02</span>
+            <h4>Run the file</h4>
+            <p>Open the downloaded file and share the session ID shown on screen with your engineer.</p>
+          </div>
+          <div class="scroll-animate">
+            <span>03</span>
+            <h4>Stay in control</h4>
+            <p>You can end the session at any time by closing the application. The tool does not install permanently.</p>
+          </div>
+        </div>
+        <div style="max-width:1100px;margin:24px auto 0;padding:0 24px;">
+          <a href="agent.exe" class="primary-btn" role="button">Download support agent</a>
+        </div>
+      </section>
+
+      <section class="services scroll-animate">
+        <div class="section-title scroll-animate">
+          <h2>Common questions</h2>
+          <p>Quick answers to things we're asked most often.</p>
+        </div>
+        <div class="faq scroll-animate">
+          <div class="faq-item scroll-animate">
+            <h3>My Wi-Fi is slow — what should I check first?</h3>
+            <p>Restart your router by unplugging it for 30 seconds, then plugging back in. If it's still slow, run a speed test at <strong>fast.com</strong> and compare it to your package speed. If the speed is significantly below what you're paying for, contact your ISP and let us know — we can help investigate.</p>
+          </div>
+          <div class="faq-item scroll-animate">
+            <h3>Some rooms have no Wi-Fi signal — can NetConn Pro help?</h3>
+            <p>Yes. Dead zones are usually caused by walls, distance from the router, or interference. We can survey your property and recommend additional access points or a mesh system to give you full coverage.</p>
+          </div>
+          <div class="faq-item scroll-animate">
+            <h3>My CCTV app isn't showing a live view — what should I do?</h3>
+            <p>Check that your recorder is powered on and connected to your network. Try restarting the app, and if the issue persists, reboot the recorder. If it still doesn't connect, contact us — it may be a port forwarding or DNS issue we can resolve remotely.</p>
+          </div>
+          <div class="faq-item scroll-animate">
+            <h3>How do I get a new device set up on my network?</h3>
+            <p>Most devices just need your Wi-Fi password to connect. If you're having trouble connecting a smart home device, TV, or console, book a call with us and we can walk you through it or schedule a visit.</p>
+          </div>
+          <div class="faq-item scroll-animate">
+            <h3>Is the support agent download safe?</h3>
+            <p>Yes. The support agent is a remote access tool we use to diagnose and fix issues on your device during a live support call. It only runs when you open it and only with your permission. <strong>Never download or run it unless you are in an active call with a NetConn Pro engineer.</strong></p>
           </div>
         </div>
       </section>
     </main>
-  
-    <div class="site-version" aria-label="Site version">Version v1.0.0</div>
-    <style>
-      .site-version {
-        position: fixed;
-        right: 12px;
-        bottom: 10px;
-        z-index: 999;
-        font-size: 0.72rem;
-        letter-spacing: 0.2px;
-        color: rgba(245,247,255,0.72);
-        background: rgba(11,15,26,0.78);
-        border: 1px solid rgba(245,247,255,0.14);
-        border-radius: 999px;
-        padding: 4px 10px;
-        backdrop-filter: blur(6px);
-      }
-      @media (max-width: 768px) {
-        .site-version {
-          right: 8px;
-          bottom: 8px;
-          font-size: 0.66rem;
-          padding: 3px 8px;
-        }
-      }
-    </style>
+
+    <div class="modal" id="contact-modal" aria-hidden="true">
+      <div class="modal-overlay" data-modal-close></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+        <button class="modal-close" type="button" data-modal-close aria-label="Close contact form">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h2 id="contact-modal-title">Contact Us</h2>
+        <p>Tell us about your issue and we'll get back to you as soon as possible.</p>
+        <form class="modal-form">
+          <label for="contact-name" class="sr-only">Full name</label>
+          <input id="contact-name" type="text" name="fullName" placeholder="Full name" />
+          <label for="contact-email" class="sr-only">Email address</label>
+          <input id="contact-email" type="email" name="email" placeholder="Email address" />
+          <label for="contact-location" class="sr-only">Location</label>
+          <input id="contact-location" type="text" name="location" placeholder="Location" />
+          <label for="contact-message" class="sr-only">What do you need help with?</label>
+          <textarea id="contact-message" name="message" rows="4" placeholder="What do you need help with?"></textarea>
+          <button type="submit">Send request</button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="footer scroll-animate">
+      <div class="scroll-animate">
+        <strong>NetConn Pro</strong>
+        <p>Fast home Wi-Fi. Smart security. Always on.</p>
+      </div>
+      <div class="footer-links scroll-animate">
+        <span>© 2026 NetConn Pro</span>
+        <a href="mailto:hello@netconn.pro">hello@netconn.pro</a>
+        <a href="tel:+447706943666">+44 7706 943666</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+    </footer>
+
+    <script src="src/js/main.js"></script>
+    <div class="site-version" aria-label="Site version">Version v1.1.0</div>
   </body>
 </html>

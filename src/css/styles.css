@@ -921,3 +921,71 @@ section {
     transform: translateX(-50%);
   }
 }
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip navigation link */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 1000;
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Version badge (shared across all pages) */
+.site-version {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  z-index: 999;
+  font-size: 0.72rem;
+  letter-spacing: 0.2px;
+  color: rgba(245, 247, 255, 0.72);
+  background: rgba(11, 15, 26, 0.78);
+  border: 1px solid rgba(245, 247, 255, 0.14);
+  border-radius: 999px;
+  padding: 4px 10px;
+  backdrop-filter: blur(6px);
+}
+
+@media (max-width: 768px) {
+  .site-version {
+    right: 8px;
+    bottom: 8px;
+    font-size: 0.66rem;
+    padding: 3px 8px;
+  }
+}
+
+/* Footer link interactivity */
+.footer-links a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}

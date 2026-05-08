@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NetConn Pro - Services Gallery</title>
+    <title>Services - NetConn Pro</title>
+    <meta name="description" content="Browse NetConn Pro's services — web, email, CCTV, and Paxton access control — all delivered by certified engineers." />
     <link rel="stylesheet" href="../src/css/styles.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -58,14 +59,10 @@
         font-weight: 700;
         color: var(--accent);
       }
-
-      .tile-link.disabled {
-        color: var(--muted);
-        cursor: not-allowed;
-      }
     </style>
   </head>
   <body>
+    <a class="skip-to-content" href="#main-content">Skip to content</a>
     <header class="site-header">
       <nav class="nav">
         <a href="../index.html"><img class="logo" src="../src/img/logo.png" alt="NetConn Pro" /></a>
@@ -77,18 +74,17 @@
           <a href="access-control/">Paxton</a>
           <a href="../support.html">Support</a>
         </div>
-        <a href="../services.html" class="nav-cta" style="display:inline-flex;align-items:center;">Legacy page</a>
+        <button class="nav-cta" data-contact-modal>Get in touch</button>
       </nav>
     </header>
 
-    <main>
+    <main id="main-content">
       <section class="hero scroll-animate">
         <div class="hero-content">
           <div class="eyebrow">NetConn Pro Services</div>
           <h1>Service gallery</h1>
           <p>
-            Browse our services and jump straight to what you need. We’ve replaced <code>/services</code>
-            with this gallery layout so it’s easier to expand with new offerings.
+            Browse our services and jump straight to what you need.
           </p>
         </div>
       </section>
@@ -96,7 +92,7 @@
       <section class="services scroll-animate">
         <div class="section-title scroll-animate">
           <h2>Explore services</h2>
-          <p>Current live services plus upcoming security packages.</p>
+          <p>Current live services available for homes and businesses.</p>
         </div>
 
         <div class="service-gallery">
@@ -131,6 +127,28 @@
       </section>
     </main>
 
+    <div class="modal" id="contact-modal" aria-hidden="true">
+      <div class="modal-overlay" data-modal-close></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+        <button class="modal-close" type="button" data-modal-close aria-label="Close contact form">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h2 id="contact-modal-title">Contact Us</h2>
+        <p>Tell us about your goals and timeline. We'll follow up within one business day.</p>
+        <form class="modal-form">
+          <label for="contact-name" class="sr-only">Full name</label>
+          <input id="contact-name" type="text" name="fullName" placeholder="Full name" />
+          <label for="contact-email" class="sr-only">Email address</label>
+          <input id="contact-email" type="email" name="email" placeholder="Email address" />
+          <label for="contact-location" class="sr-only">Location</label>
+          <input id="contact-location" type="text" name="location" placeholder="Location" />
+          <label for="contact-message" class="sr-only">What do you need help with?</label>
+          <textarea id="contact-message" name="message" rows="4" placeholder="What do you need help with?"></textarea>
+          <button type="submit">Send request</button>
+        </form>
+      </div>
+    </div>
+
     <footer class="footer scroll-animate">
       <div class="scroll-animate">
         <strong>NetConn Pro</strong>
@@ -138,53 +156,13 @@
       </div>
       <div class="footer-links scroll-animate">
         <span>© 2026 NetConn Pro</span>
-        <span>hello@netconn.pro</span>
-        <span>+44 7706 943666</span>
+        <a href="mailto:hello@netconn.pro">hello@netconn.pro</a>
+        <a href="tel:+447706943666">+44 7706 943666</a>
+        <a href="../privacy.html">Privacy Policy</a>
       </div>
     </footer>
 
-    <script>
-      const revealElements = document.querySelectorAll('.scroll-animate');
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduced) {
-        revealElements.forEach((e) => e.classList.add('is-visible'));
-      } else {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.2 });
-        revealElements.forEach((e) => observer.observe(e));
-      }
-    </script>
-  
-    <div class="site-version" aria-label="Site version">Version v1.0.0</div>
-    <style>
-      .site-version {
-        position: fixed;
-        right: 12px;
-        bottom: 10px;
-        z-index: 999;
-        font-size: 0.72rem;
-        letter-spacing: 0.2px;
-        color: rgba(245,247,255,0.72);
-        background: rgba(11,15,26,0.78);
-        border: 1px solid rgba(245,247,255,0.14);
-        border-radius: 999px;
-        padding: 4px 10px;
-        backdrop-filter: blur(6px);
-      }
-      @media (max-width: 768px) {
-        .site-version {
-          right: 8px;
-          bottom: 8px;
-          font-size: 0.66rem;
-          padding: 3px 8px;
-        }
-      }
-    </style>
+    <script src="../src/js/main.js"></script>
+    <div class="site-version" aria-label="Site version">Version v1.1.0</div>
   </body>
 </html>
