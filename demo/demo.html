@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Authentic Pubs Co. — Order</title>
+<style>
+  :root {
+    --dark:   #1A1A2E;
+    --amber:  #D4870A;
+    --amber-light: #F5A623;
+    --cream:  #FDF6EC;
+    --mid:    #F0E6D3;
+    --border: #E0CEAA;
+    --text:   #2C2C2C;
+    --muted:  #777;
+    --green:  #2E7D32;
+    --green-light: #E8F5E9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--cream);
+    display: flex; justify-content: center; align-items: flex-start;
+    min-height: 100vh;
+  }
+
+  .phone {
+    width: 100%; max-width: 480px; min-height: 100vh;
+    background: var(--cream);
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+  }
+
+  .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  .screen.active { display: flex; }
+  .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* ── VENUE PICKER ─────────────────────────── */
+  #screen-venues { background: var(--dark); }
+  .venues-top { background: var(--dark); padding: 28px 24px 22px; text-align: center; flex-shrink: 0; }
+  .apc-logo-wrap {
+    width: 96px; height: 96px; border-radius: 20px; overflow: hidden;
+    margin: 0 auto 16px; background: #f7f0e6;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .apc-logo-wrap img { width: 88%; height: 88%; object-fit: contain; }
+  .venues-top h1 { color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .venues-top p  { color: rgba(255,255,255,0.5); font-size: 14px; }
+  .venues-body { background: var(--cream); border-radius: 28px 28px 0 0; padding: 26px 18px 40px; flex: 1; }
+  .venues-body h2 { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+
+  .venue-card {
+    background: #fff; border-radius: 18px; padding: 14px 16px;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); cursor: pointer;
+    border: 2px solid transparent; transition: all 0.15s;
+  }
+  .venue-card:active { transform: scale(0.98); border-color: var(--amber); background: #FFFAF2; }
+  .venue-logo-box {
+    width: 58px; height: 58px; border-radius: 14px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .venue-logo-box img { width: 100%; height: 100%; object-fit: contain; }
+  .venue-logo-box.dark-bg { background: #0e0e1c; }
+  .venue-logo-box.light-bg { background: #fff; }
+  .venue-logo-box.blue-bg  { background: #e8eef2; }
+  .venue-info { flex: 1; }
+  .venue-info .vname { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 3px; }
+  .venue-info .vaddr { font-size: 12px; color: var(--muted); }
+  .venue-arrow { font-size: 20px; color: var(--border); }
+
+  /* ── SHARED SCREEN HEADER ────────────────── */
+  .screen-header {
+    background: var(--dark); padding: 14px 16px 16px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .screen-header-logo {
+    width: 40px; height: 40px; border-radius: 10px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .screen-header-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .screen-header-logo.light-bg { background: #fff; }
+  .screen-header-logo.dark-bg  { background: #0e0e1c; }
+  .screen-header-logo.blue-bg  { background: #e8eef2; }
+  .screen-header-text { flex: 1; }
+  .screen-header-text .hdr-venue { color: #fff; font-size: 15px; font-weight: 800; }
+  .screen-header-text .hdr-table { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 1px; }
+
+  /* ── GROUP PICKER ─────────────────────────── */
+  .group-body { padding: 20px 14px 32px; }
+  .group-body-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; color: var(--muted); margin-bottom: 14px; }
+  .group-grid { display: flex; flex-direction: column; gap: 11px; }
+  .group-card {
+    background: #fff; border-radius: 18px; padding: 20px 18px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07); cursor: pointer;
+    border: 2px solid transparent; transition: all 0.12s;
+  }
+  .group-card:active { transform: scale(0.98); border-color: var(--amber); background: #FFFAF2; }
+  .group-card-emoji { font-size: 36px; line-height: 1; width: 52px; text-align: center; flex-shrink: 0; }
+  .group-card-info  { flex: 1; }
+  .group-card-name  { font-size: 18px; font-weight: 900; color: var(--dark); }
+  .group-card-sub   { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .group-card-arrow { font-size: 22px; color: var(--border); flex-shrink: 0; }
+
+  /* ── SUB-CATEGORY PICKER ──────────────────── */
+  .subcat-body { padding: 18px 13px 32px; }
+  .subcat-body-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; color: var(--muted); margin-bottom: 13px; }
+  .subcat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .subcat-card {
+    background: #fff; border-radius: 16px; padding: 17px 13px 14px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); cursor: pointer;
+    border: 2px solid transparent; transition: all 0.12s;
+  }
+  .subcat-card:active { transform: scale(0.97); border-color: var(--amber); background: #FFFAF2; }
+  .subcat-card-emoji { font-size: 28px; line-height: 1; }
+  .subcat-card-name  { font-size: 13px; font-weight: 800; color: var(--dark); line-height: 1.2; }
+  .subcat-card-count { font-size: 11px; color: var(--muted); }
+
+  /* ── APP HEADER ───────────────────────────── */
+  .app-header {
+    background: var(--dark); padding: 13px 16px;
+    display: flex; align-items: center; gap: 11px; flex-shrink: 0;
+  }
+  .back-btn {
+    width: 36px; height: 36px; background: rgba(255,255,255,0.12);
+    border: none; border-radius: 10px; color: #fff; font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .header-title { flex: 1; }
+  .header-title .venue { color: rgba(255,255,255,0.5); font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .header-title .page  { color: #fff; font-size: 17px; font-weight: 800; }
+  .basket-btn {
+    position: relative; width: 40px; height: 40px; background: var(--amber);
+    border: none; border-radius: 12px; color: #fff; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .basket-count {
+    position: absolute; top: -5px; right: -5px;
+    background: #fff; color: var(--amber);
+    font-size: 10px; font-weight: 900; width: 18px; height: 18px;
+    border-radius: 50%; display: none; align-items: center; justify-content: center;
+  }
+  .basket-count.show { display: flex; }
+
+  /* ── MENU ────────────────────────────────── */
+  .category-tabs {
+    background: var(--dark); padding: 0 13px 13px;
+    display: flex; gap: 7px; overflow-x: auto; flex-shrink: 0;
+  }
+  .category-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab {
+    flex-shrink: 0; padding: 7px 13px; border-radius: 20px;
+    border: 1.5px solid rgba(255,255,255,0.2); background: transparent;
+    color: rgba(255,255,255,0.65); font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: all 0.15s;
+  }
+  .cat-tab.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+
+  .menu-section { padding: 16px 13px 0; }
+  .menu-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 11px; font-weight: 800; }
+
+  .menu-item {
+    background: #fff; border-radius: 15px; padding: 12px 12px;
+    margin-bottom: 8px; display: flex; gap: 11px; align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07); cursor: pointer; transition: transform 0.1s;
+  }
+  .menu-item:active { transform: scale(0.98); }
+  .item-icon { font-size: 30px; width: 50px; height: 50px; background: var(--mid); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+  .item-desc { font-size: 12px; color: var(--muted); line-height: 1.35; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-footer { display: flex; align-items: center; justify-content: space-between; }
+  .item-price { font-size: 15px; font-weight: 900; color: var(--dark); }
+  .atags { display: flex; gap: 3px; }
+  .atag { font-size: 10px; background: var(--mid); color: var(--muted); padding: 2px 5px; border-radius: 5px; }
+  .add-btn {
+    width: 30px; height: 30px; background: var(--amber); border: none; border-radius: 9px;
+    color: #fff; font-size: 20px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.1s;
+  }
+  .add-btn:active { transform: scale(0.88); }
+  .menu-bottom-pad { height: 100px; }
+
+  .basket-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 13px 20px; background: linear-gradient(to top, var(--cream) 70%, transparent); display: none; }
+  .basket-bar.show { display: block; }
+  .basket-bar-inner { background: var(--dark); border-radius: 15px; padding: 13px 16px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: transform 0.1s; }
+  .basket-bar-inner:active { transform: scale(0.98); }
+  .bar-count  { background: var(--amber); color: #fff; font-size: 13px; font-weight: 900; padding: 4px 10px; border-radius: 8px; }
+  .bar-label  { flex: 1; color: #fff; font-size: 15px; font-weight: 600; }
+  .bar-total  { color: var(--amber-light); font-size: 16px; font-weight: 900; }
+
+  /* ── ITEM MODAL ───────────────────────────── */
+  .modal-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+    display: none; align-items: flex-end; z-index: 100; backdrop-filter: blur(3px);
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-sheet {
+    background: var(--cream); border-radius: 24px 24px 0 0;
+    width: 100%; padding: 0 0 32px; max-height: 88%; overflow-y: auto;
+  }
+  .modal-sheet::-webkit-scrollbar { display: none; }
+  .modal-drag { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 11px auto 0; }
+  .modal-emoji { font-size: 58px; text-align: center; padding: 16px 0 6px; }
+  .modal-body { padding: 0 18px; }
+  .modal-body h2  { font-size: 21px; font-weight: 900; color: var(--dark); margin-bottom: 3px; }
+  .modal-price    { font-size: 18px; font-weight: 900; color: var(--amber); margin-bottom: 9px; }
+  .modal-desc     { font-size: 14px; color: var(--muted); line-height: 1.55; margin-bottom: 16px; }
+  .modal-sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 800; color: var(--muted); margin-bottom: 9px; }
+  .option-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+  .option-chip {
+    padding: 7px 13px; border-radius: 20px; border: 2px solid var(--border); background: #fff;
+    font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.1s;
+  }
+  .option-chip.selected { border-color: var(--amber); background: #FFF3DC; color: var(--amber); }
+  .allergen-list { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+  .allergen-chip { background: #FFF3DC; border: 1px solid #F5A623; color: var(--amber); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .notes-label  { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+  .notes-input  { width: 100%; padding: 11px 13px; border: 1.5px solid var(--border); border-radius: 12px; background: #fff; font-size: 14px; color: var(--text); font-family: inherit; resize: none; margin-bottom: 16px; }
+  .notes-input:focus { outline: none; border-color: var(--amber); }
+  .qty-row { display: flex; align-items: center; gap: 13px; margin-bottom: 16px; }
+  .qty-btn { width: 40px; height: 40px; border: 2px solid var(--border); background: #fff; border-radius: 12px; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--dark); }
+  .qty-btn:active { background: var(--mid); }
+  .qty-num { font-size: 20px; font-weight: 900; color: var(--dark); min-width: 28px; text-align: center; }
+  .modal-add-btn { width: 100%; padding: 17px; background: var(--amber); border: none; border-radius: 15px; color: #fff; font-size: 17px; font-weight: 900; cursor: pointer; }
+  .modal-add-btn:active { background: #B8720A; }
+
+  /* ── BASKET ──────────────────────────────── */
+  .basket-hdr { padding: 16px 13px 0; }
+  .basket-venue-info { background: var(--mid); border-radius: 11px; padding: 11px 15px; margin-bottom: 13px; display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--muted); }
+  .basket-venue-info strong { color: var(--dark); }
+  .basket-item {
+    background: #fff; border-radius: 15px; padding: 12px 13px;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 11px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .bi-icon { font-size: 24px; width: 44px; height: 44px; background: var(--mid); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .bi-info { flex: 1; min-width: 0; }
+  .bi-name { font-size: 14px; font-weight: 800; color: var(--text); }
+  .bi-opts { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .bi-right { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+  .bi-price { font-size: 14px; font-weight: 900; color: var(--dark); min-width: 44px; text-align: right; }
+  .bi-qty { display: flex; align-items: center; background: var(--mid); border-radius: 9px; overflow: hidden; }
+  .bq-btn { width: 29px; height: 29px; background: transparent; border: none; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--dark); }
+  .bq-btn:active { background: var(--border); }
+  .bq-num { font-size: 14px; font-weight: 900; color: var(--dark); width: 24px; text-align: center; }
+  .basket-totals { background: #fff; border-radius: 15px; padding: 14px; margin: 10px 13px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .total-row { display: flex; justify-content: space-between; padding: 5px 0; }
+  .total-row .lbl { font-size: 14px; color: var(--muted); }
+  .total-row .val { font-size: 14px; font-weight: 600; color: var(--text); }
+  .total-row.grand { border-top: 1.5px solid var(--border); margin-top: 7px; padding-top: 10px; }
+  .total-row.grand .lbl { font-size: 16px; font-weight: 900; color: var(--dark); }
+  .total-row.grand .val { font-size: 18px; font-weight: 900; color: var(--dark); }
+  .checkout-btn { margin: 12px 13px; padding: 18px; background: var(--amber); border: none; border-radius: 15px; color: #fff; font-size: 17px; font-weight: 900; cursor: pointer; width: calc(100% - 26px); flex-shrink: 0; }
+  .checkout-btn:active { background: #B8720A; }
+  .empty-basket { text-align: center; padding: 60px 24px; }
+  .empty-basket .ico { font-size: 48px; margin-bottom: 14px; }
+  .empty-basket h3 { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 7px; }
+  .empty-basket p  { font-size: 14px; color: var(--muted); }
+
+  /* ── CHECKOUT ────────────────────────────── */
+  .checkout-body { padding: 16px 13px; }
+  .summary-card { background: #fff; border-radius: 15px; padding: 14px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .summary-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 800; margin-bottom: 11px; }
+  .sum-row { display: flex; justify-content: space-between; font-size: 14px; padding: 3px 0; }
+  .sum-row .n { color: var(--muted); }
+  .sum-divider { border: none; border-top: 1px solid var(--border); margin: 9px 0; }
+  .sum-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; color: var(--dark); }
+  .pay-card { background: #fff; border-radius: 15px; padding: 14px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .pay-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 800; margin-bottom: 13px; }
+  .pay-method-row { display: flex; gap: 7px; margin-bottom: 14px; }
+  .pay-method-btn { flex: 1; padding: 10px 4px; border-radius: 11px; border: 2px solid var(--border); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 13px; font-weight: 700; color: var(--text); }
+  .pay-method-btn.selected { border-color: var(--amber); background: #FFF3DC; color: var(--amber); }
+  .field-label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .card-field { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 11px; background: var(--cream); font-size: 15px; color: var(--text); font-family: 'Courier New', monospace; margin-bottom: 9px; }
+  .card-field:focus { outline: none; border-color: var(--amber); background: #fff; }
+  .card-row { display: flex; gap: 9px; }
+  .card-row .card-field { flex: 1; }
+  .stripe-badge { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 13px; font-size: 12px; color: var(--muted); }
+  .pay-btn { width: 100%; padding: 17px; background: var(--dark); border: none; border-radius: 15px; color: #fff; font-size: 17px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .pay-btn:active { opacity: 0.85; }
+  .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .spinner.show { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── CONFIRMATION ────────────────────────── */
+  #screen-confirm { background: var(--cream); }
+  .confirm-body { padding: 36px 22px 32px; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .confirm-tick { width: 74px; height: 74px; background: var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 16px; animation: pop 0.4s ease; }
+  @keyframes pop { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(212,135,10,0.4); } 50% { box-shadow: 0 0 0 8px rgba(212,135,10,0); } }
+  .confirm-body h2 { font-size: 24px; font-weight: 900; color: var(--dark); margin-bottom: 7px; }
+  .confirm-body p  { color: var(--muted); font-size: 15px; margin-bottom: 22px; line-height: 1.5; }
+  .order-num { background: var(--dark); color: var(--amber-light); font-size: 21px; font-weight: 900; padding: 13px 28px; border-radius: 15px; margin-bottom: 26px; letter-spacing: 2px; }
+  .tracker-card { background: #fff; border-radius: 20px; padding: 17px 17px 20px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+  .tracker-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 800; margin-bottom: 18px; text-align: left; }
+  .tracker-step { display: flex; align-items: flex-start; gap: 13px; padding-bottom: 18px; position: relative; }
+  .tracker-step:last-child { padding-bottom: 0; }
+  .tracker-step:not(:last-child)::before { content: ''; position: absolute; left: 16px; top: 34px; width: 2px; bottom: 0; background: var(--border); }
+  .tracker-step.done:not(:last-child)::before { background: var(--green); }
+  .step-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; z-index: 1; }
+  .tracker-step.done   .step-icon { background: var(--green); }
+  .tracker-step.active .step-icon { background: var(--amber); animation: pulse 1.5s ease infinite; }
+  .tracker-step.pending .step-icon { background: var(--border); }
+  .step-txt { padding-top: 5px; }
+  .step-title { font-size: 14px; font-weight: 800; color: var(--dark); }
+  .step-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .tracker-step.pending .step-title { color: var(--muted); }
+  .tracker-step.pending .step-sub   { color: #bbb; }
+  .reorder-btn { width: 100%; padding: 15px; background: transparent; border: 2px solid var(--amber); border-radius: 15px; color: var(--amber); font-size: 16px; font-weight: 800; cursor: pointer; }
+  .reorder-btn:active { background: #FFF3DC; }
+
+  @media (min-width: 481px) {
+    body { background: #d6cdc2; padding: 20px 0; align-items: flex-start; }
+    .phone { min-height: 844px; border-radius: 40px; box-shadow: 0 30px 80px rgba(0,0,0,0.4), 0 0 0 2px #333; }
+  }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- VENUE PICKER -->
+  <div class="screen active" id="screen-venues">
+    <div class="venues-top">
+      <div class="apc-logo-wrap">
+        <img src="Logos/authentic logo.png" alt="Authentic Pubs Co.">
+      </div>
+      <h1>Authentic Pubs Co.</h1>
+      <p>Choose your venue to start ordering</p>
+    </div>
+    <div class="venues-body">
+      <h2>Our Pubs</h2>
+      <div class="venue-card" onclick="selectVenue('bell')">
+        <div class="venue-logo-box light-bg">
+          <img src="Logos/bell logo.png" alt="The Bell Inn">
+        </div>
+        <div class="venue-info">
+          <div class="vname">The Bell Inn</div>
+          <div class="vaddr">Hampton — Table ordering available</div>
+        </div>
+        <span class="venue-arrow">›</span>
+      </div>
+      <div class="venue-card" onclick="selectVenue('flowerpot')">
+        <div class="venue-logo-box dark-bg">
+          <img src="Logos/flower pot new logo.png" alt="The Flower Pot">
+        </div>
+        <div class="venue-info">
+          <div class="vname">The Flower Pot</div>
+          <div class="vaddr">Table ordering available</div>
+        </div>
+        <span class="venue-arrow">›</span>
+      </div>
+      <div class="venue-card" onclick="selectVenue('retreat')">
+        <div class="venue-logo-box blue-bg">
+          <img src="Logos/retreat logo transparent.png" alt="The Retreat">
+        </div>
+        <div class="venue-info">
+          <div class="vname">The Retreat</div>
+          <div class="vaddr">Table ordering available</div>
+        </div>
+        <span class="venue-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GROUP PICKER -->
+  <div class="screen" id="screen-groups">
+    <div class="screen-header">
+      <div class="screen-header-logo" id="groupHeaderLogoBox">
+        <img id="groupHeaderLogoImg" src="" alt="">
+      </div>
+      <div class="screen-header-text">
+        <div class="hdr-venue" id="groupVenueName">The Bell Inn</div>
+        <div class="hdr-table">🪑 &nbsp;<span id="groupTableLabel">Table 7</span></div>
+      </div>
+      <button class="basket-btn" onclick="goTo('basket')">
+        🛒<span class="basket-count" id="basketCountGroup"></span>
+      </button>
+    </div>
+    <div class="scroll-area">
+      <div class="group-body">
+        <div class="group-body-title">What are you after?</div>
+        <div class="group-grid">
+          <div class="group-card" onclick="openGroup('drinks')">
+            <div class="group-card-emoji">🍺</div>
+            <div class="group-card-info">
+              <div class="group-card-name">Drinks</div>
+              <div class="group-card-sub">Draught, cocktails, wine, spirits &amp; more</div>
+            </div>
+            <span class="group-card-arrow">›</span>
+          </div>
+          <div class="group-card" onclick="openGroup('food')">
+            <div class="group-card-emoji">🍔</div>
+            <div class="group-card-info">
+              <div class="group-card-name">Food</div>
+              <div class="group-card-sub">Starters, mains, sides &amp; desserts</div>
+            </div>
+            <span class="group-card-arrow">›</span>
+          </div>
+          <div class="group-card" onclick="openGroup('snacks')">
+            <div class="group-card-emoji">🧀</div>
+            <div class="group-card-info">
+              <div class="group-card-name">Snacks</div>
+              <div class="group-card-sub">Crisps, nuts &amp; bar bites</div>
+            </div>
+            <span class="group-card-arrow">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUB-CATEGORY PICKER -->
+  <div class="screen" id="screen-subcats">
+    <div class="app-header">
+      <button class="back-btn" onclick="goTo('groups')">←</button>
+      <div class="header-title">
+        <div class="venue" id="subcatVenueLabel">The Bell Inn</div>
+        <div class="page" id="subcatGroupLabel">Drinks</div>
+      </div>
+      <button class="basket-btn" onclick="goTo('basket')">
+        🛒<span class="basket-count" id="basketCountSubcat"></span>
+      </button>
+    </div>
+    <div class="scroll-area">
+      <div class="subcat-body">
+        <div class="subcat-body-title">Choose a category</div>
+        <div class="subcat-grid" id="subcatGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div class="screen" id="screen-menu">
+    <div class="app-header">
+      <button class="back-btn" onclick="goTo('subcats')">←</button>
+      <div class="header-title">
+        <div class="venue" id="menuVenueLabel">The Bell Inn</div>
+        <div class="page" id="menuCatLabel">Menu</div>
+      </div>
+      <button class="basket-btn" onclick="goTo('basket')">
+        🛒<span class="basket-count" id="basketCountMenu"></span>
+      </button>
+    </div>
+    <div class="category-tabs" id="catTabs"></div>
+    <div class="scroll-area" id="menuScrollArea">
+      <div id="menuContent"></div>
+      <div class="menu-bottom-pad"></div>
+    </div>
+    <div class="basket-bar" id="basketBar" onclick="goTo('basket')">
+      <div class="basket-bar-inner">
+        <span class="bar-count" id="barCount">0</span>
+        <span class="bar-label">View Basket</span>
+        <span class="bar-total" id="barTotal">£0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BASKET -->
+  <div class="screen" id="screen-basket">
+    <div class="app-header">
+      <button class="back-btn" onclick="goTo('menu')">←</button>
+      <div class="header-title">
+        <div class="venue" id="basketVenueLabel">The Bell Inn</div>
+        <div class="page">Your Basket</div>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="basket-hdr">
+        <div class="basket-venue-info">🪑 &nbsp;<span id="basketTableInfo">Table 7 &nbsp;·&nbsp; <strong>The Bell Inn</strong></span></div>
+        <div id="basketItems"></div>
+      </div>
+      <div id="basketTotals"></div>
+      <div style="height:14px"></div>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="goTo('checkout')">Pay Now →</button>
+  </div>
+
+  <!-- CHECKOUT -->
+  <div class="screen" id="screen-checkout">
+    <div class="app-header">
+      <button class="back-btn" onclick="goTo('basket')">←</button>
+      <div class="header-title">
+        <div class="venue">Secure Checkout</div>
+        <div class="page">Payment</div>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="checkout-body">
+        <div class="summary-card" id="checkoutSummary"></div>
+        <div class="pay-card">
+          <h3>Payment Method</h3>
+          <div class="pay-method-row">
+            <button class="pay-method-btn selected" id="payCard"   onclick="selectPay('card')">💳 Card</button>
+            <button class="pay-method-btn"          id="payApple"  onclick="selectPay('apple')">🍎 Apple Pay</button>
+            <button class="pay-method-btn"          id="payGoogle" onclick="selectPay('google')">G Google Pay</button>
+          </div>
+          <div id="cardFields">
+            <div class="field-label">Card Number</div>
+            <input class="card-field" placeholder="1234  5678  9012  3456" maxlength="19" oninput="fmtCard(this)">
+            <div class="card-row">
+              <div style="flex:1"><div class="field-label">Expiry</div><input class="card-field" placeholder="MM / YY" maxlength="7" oninput="fmtExp(this)"></div>
+              <div style="flex:1"><div class="field-label">CVV</div><input class="card-field" placeholder="•••" maxlength="3" type="password"></div>
+            </div>
+          </div>
+          <div class="stripe-badge">🔒 &nbsp;Secured by <strong>&nbsp;Stripe&nbsp;</strong> · PCI DSS compliant</div>
+          <button class="pay-btn" id="payBtn" onclick="processPayment()">
+            <span id="payBtnLabel">Pay <span id="payTotal">£0.00</span></span>
+            <div class="spinner" id="paySpinner"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div class="screen" id="screen-confirm">
+    <div class="scroll-area">
+      <div class="confirm-body">
+        <div class="confirm-tick">✓</div>
+        <h2>Order Placed!</h2>
+        <p id="confirmMsg">Your order is with the team.<br>We'll bring it to your table.</p>
+        <div class="order-num" id="orderNum">#APC-0047</div>
+        <div class="tracker-card">
+          <h3>Live Order Status</h3>
+          <div class="tracker-step pending" id="step1">
+            <div class="step-icon">○</div>
+            <div class="step-txt"><div class="step-title">Order Received</div><div class="step-sub">Payment confirmed</div></div>
+          </div>
+          <div class="tracker-step pending" id="step2">
+            <div class="step-icon">○</div>
+            <div class="step-txt"><div class="step-title">Being Prepared</div><div class="step-sub">The team are on it…</div></div>
+          </div>
+          <div class="tracker-step pending" id="step3">
+            <div class="step-icon">○</div>
+            <div class="step-txt"><div class="step-title">Ready at Your Table</div><div class="step-sub">We'll bring it over</div></div>
+          </div>
+        </div>
+        <button class="reorder-btn" onclick="goTo('groups')">Order More 🍻</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITEM MODAL -->
+  <div class="modal-overlay" id="itemModal" onclick="closeModal(event)">
+    <div class="modal-sheet">
+      <div class="modal-drag"></div>
+      <div class="modal-emoji" id="modalEmoji"></div>
+      <div class="modal-body">
+        <h2 id="modalName"></h2>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-desc"  id="modalDesc"></div>
+        <div id="modalOptions"></div>
+        <div id="modalAllergens"></div>
+        <div class="notes-label">Special requests (optional)</div>
+        <textarea class="notes-input" id="modalNotes" rows="2" placeholder="e.g. no ice, extra lime…"></textarea>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="chgQty(-1)">−</button>
+          <span class="qty-num" id="modalQty">1</span>
+          <button class="qty-btn" onclick="chgQty(1)">+</button>
+          <span style="font-size:13px;color:var(--muted);flex:1;text-align:right" id="modalSub"></span>
+        </div>
+        <button class="modal-add-btn" onclick="addToBasket()">Add to Basket</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// VENUE CONFIG
+// ═══════════════════════════════════════════════════════
+const VENUES = {
+  bell:       { name:'The Bell Inn',   logo:'Logos/bell logo.png',                    logoBg:'light-bg', table:'Table 7' },
+  flowerpot:  { name:'The Flower Pot', logo:'Logos/flower pot new logo.png',           logoBg:'dark-bg',  table:'Table 4' },
+  retreat:    { name:'The Retreat',    logo:'Logos/retreat logo transparent.png',      logoBg:'blue-bg',  table:'Table 12' },
+};
+
+// ═══════════════════════════════════════════════════════
+// MENU DATA — The Bell Inn (used for all venues in demo)
+// ═══════════════════════════════════════════════════════
+const MENU = [
+  { id:'draught', name:'Draught Beer', emoji:'🍺', items:[
+    { id:1,  name:'Moretti',             desc:'4.6% ABV · Premium Italian lager',                                    price:730, emoji:'🍺', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £7.30','Half — £3.75']} },
+    { id:2,  name:'Heineken',            desc:'5.0% ABV · Classic Dutch lager',                                      price:730, emoji:'🍺', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £7.30','Half — £3.75']} },
+    { id:3,  name:'Amstel',              desc:'4.1% ABV · Light, refreshing lager',                                  price:630, emoji:'🍺', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £6.30','Half — £3.25']} },
+    { id:4,  name:'Beavertown Neck Oil', desc:'4.3% ABV · Tropical session IPA',                                     price:770, emoji:'🍺', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £7.70','Half — £3.95']} },
+    { id:5,  name:'Guinness',            desc:'4.2% ABV · Classic Irish dry stout',                                  price:760, emoji:'🖤', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £7.60','Half — £3.90']} },
+    { id:6,  name:"Murphy's",            desc:'4.0% ABV · Smooth Irish stout',                                       price:710, emoji:'🖤', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £7.10','Half — £3.65']} },
+    { id:7,  name:'Cruzcampo',           desc:'4.4% ABV · Crisp Spanish lager',                                      price:710, emoji:'🍺', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £7.10','Half — £3.65']} },
+    { id:8,  name:'Moretti Sol De Mare', desc:'4.8% ABV · Refreshing citrus lager',                                  price:750, emoji:'🌊', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £7.50','Half — £3.85']} },
+    { id:9,  name:"Inch's Cider",        desc:'4.5% ABV · Crisp apple cider',                                        price:700, emoji:'🍏', allergens:[],          options:{label:'Size', choices:['Pint — £7.00','Half — £3.60']} },
+  ]},
+  { id:'cocktails', name:'Cocktails', emoji:'🍸', items:[
+    { id:20, name:'Pornstar Martini',    desc:'Vanilla vodka, passion fruit liqueur & puree, with a chilled shot of Prosecco', price:1000, emoji:'🍸', allergens:['Sulphites'], options:null },
+    { id:21, name:'Espresso Martini',    desc:'Vodka, coffee liqueur and fresh espresso',                              price:1000, emoji:'☕', allergens:[], options:null },
+    { id:22, name:'Mojito',              desc:'Golden rum, fresh mint, sugar, zesty lime and soda water',              price:1000, emoji:'🌿', allergens:[], options:null },
+    { id:23, name:'Aperol Spritz',       desc:'Aperol served with a mini Prosecco bottle and a slice of orange',       price:1200, emoji:'🍊', allergens:['Sulphites'], options:null },
+    { id:24, name:'Hugo',                desc:'Elderflower liqueur, soda, Prosecco and a dash of gin',                 price:1200, emoji:'🌸', allergens:['Sulphites'], options:null },
+    { id:25, name:'Margarita',           desc:'Tequila, Triple Sec & fresh lime',                                      price:1000, emoji:'🍋', allergens:[], options:null },
+    { id:26, name:'Old Fashioned',       desc:'Whiskey muddled with sugar, bitters and water, garnished with orange', price:1000, emoji:'🥃', allergens:[], options:null },
+    { id:27, name:'Pineapple Punch',     desc:'Disaronno, vanilla vodka, pineapple juice, squeeze of lime',            price:1000, emoji:'🍍', allergens:[], options:null },
+    { id:28, name:'Long Island Iced Tea',desc:'Rum, Gin, Triple Sec, Tequila, Vodka — topped with Coke and citrus',   price:1000, emoji:'🧋', allergens:[], options:null },
+    { id:29, name:'Sex on the Beach',    desc:'Vodka, peach schnapps, cranberry juice and orange juice',               price:1000, emoji:'🏖️', allergens:[], options:null },
+    { id:30, name:'Gin Fizz',            desc:'Gin, fresh lemon juice and sugar — topped with soda',                   price:1000, emoji:'🫧', allergens:[], options:null },
+    { id:31, name:'Lemon Drop',          desc:'Smooth vodka with fresh lemon juice and a touch of sugar',              price:1000, emoji:'🍋', allergens:[], options:null },
+  ]},
+  { id:'low_no', name:'Low & No', emoji:'🌿', items:[
+    { id:35, name:'Aperol Spritzless',   desc:"Lyre's Italian Spritz with Mediterranean tonic and orange",             price:900, emoji:'🍊', allergens:[], options:null },
+    { id:36, name:'Espresso Teenie',     desc:"Lyre's Coffee Liqueur and White Cane with double espresso and vanilla", price:900, emoji:'☕', allergens:[], options:null },
+    { id:37, name:'Popstar Martini',     desc:'Pineapple juice, passionfruit puree, lime, vanilla syrup and lemonade', price:900, emoji:'🍍', allergens:[], options:null },
+    { id:38, name:'No-jito',             desc:"Lyre's White Cane, fresh lime juice and sugar syrup",                   price:900, emoji:'🌿', allergens:[], options:null },
+    { id:39, name:'Heineken 0%',         desc:'0.05% ABV · Alcohol-free lager',                                        price:590, emoji:'🍺', allergens:['Gluten'], options:{label:'Size', choices:['Pint — £5.90','Half — £3.00']} },
+    { id:40, name:'Guinness 0.0',        desc:'0.0% ABV · Alcohol-free Guinness. 538ml.',                              price:620, emoji:'🖤', allergens:['Gluten'], options:null },
+    { id:41, name:'Beavertown Lazer Crush', desc:'Max 0.3% ABV · Alcohol-free IPA. 330ml.',                           price:540, emoji:'🚀', allergens:['Gluten'], options:null },
+  ]},
+  { id:'wine', name:'Wine', emoji:'🍷', items:[
+    { id:50, name:'Sangiovese IGT (Red)',      desc:'Light, fruity Italian red. Rometta, Italy.',                      price:625, emoji:'🍷', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £4.60','175ml — £6.25','250ml — £8.60','Bottle — £25.00']} },
+    { id:51, name:'Tooma River Shiraz (Red)',  desc:'Bold Australian Shiraz.',                                         price:700, emoji:'🍷', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £5.10','175ml — £7.00','250ml — £9.60','Bottle — £27.00']} },
+    { id:52, name:'Crianza Rioja (Red)',       desc:'Elegant Spanish Rioja — Vina Salceda.',                           price:950, emoji:'🍷', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £7.10','175ml — £9.50','250ml — £13.70','Bottle — £38.00']} },
+    { id:53, name:'Catena Malbec (Red)',       desc:'Exceptional Argentinian Malbec — Vista Flores.',                  price:1170,emoji:'🍷', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £7.60','175ml — £11.70','250ml — £15.00','Bottle — £42.00']} },
+    { id:54, name:'Trebbiano IGT (White)',     desc:'Crisp, light Italian white. Rometta, Italy.',                     price:625, emoji:'🥂', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £4.60','175ml — £6.25','250ml — £8.60','Bottle — £25.00']} },
+    { id:55, name:'Pinot Grigio Venezie (White)', desc:'Clean, dry Italian Pinot Grigio — Sartori.',                  price:770, emoji:'🥂', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £5.90','175ml — £7.70','250ml — £10.90','Bottle — £31.00']} },
+    { id:56, name:'NZ Sauvignon Blanc (White)',desc:'Vibrant New Zealand Sauvignon — Rapaura Springs.',                price:970, emoji:'🥂', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £6.90','175ml — £9.70','250ml — £13.20','Bottle — £39.00']} },
+    { id:57, name:'White Zinfandel (Rosé)',    desc:'Light, fruity rosé — West Coast Swing, California.',              price:700, emoji:'🌸', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £5.10','175ml — £7.00','250ml — £9.60','Bottle — £27.00']} },
+    { id:58, name:'Côtes de Provence (Rosé)', desc:'Elegant French rosé — Domaine de l\'Amour.',                      price:970, emoji:'🌸', allergens:['Sulphites'], options:{label:'Size', choices:['125ml — £6.90','175ml — £9.70','250ml — £13.20','Bottle — £39.00']} },
+    { id:59, name:'NV Prosecco',              desc:'Italian Prosecco Via Vai, Vento. Light and bubbly.',               price:995, emoji:'🥂', allergens:['Sulphites'], options:{label:'Size', choices:['200ml — £9.95','Bottle — £31.00']} },
+    { id:60, name:'Laurent-Perrier Champagne',desc:'NV La Cuvée — one of the world\'s finest Champagnes.',            price:8500,emoji:'🍾', allergens:['Sulphites'], options:{label:'Size', choices:['Bottle — £85.00']} },
+  ]},
+  { id:'gin', name:'Gin', emoji:'🌿', items:[
+    { id:70, name:"Gordon's",              desc:'Classic London Dry. 37.5% ABV. 25ml.',    price:460, emoji:'🌿', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Mediterranean Tonic','Elderflower Tonic','Ginger Ale','Soda','No mixer']} },
+    { id:71, name:"Gordon's Pink",         desc:'Strawberry-flavoured gin. 37.5% ABV. 25ml.', price:470, emoji:'🌸', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Lemonade','Soda','No mixer']} },
+    { id:72, name:"Bombay Sapphire",       desc:'Premium London Dry. 40.0% ABV. 25ml.',   price:480, emoji:'💎', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Mediterranean Tonic','Soda','No mixer']} },
+    { id:73, name:"Hendricks",             desc:'Scottish gin with cucumber & rose. 41.4% ABV. 25ml.', price:510, emoji:'🥒', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Mediterranean Tonic','Elderflower Tonic','No mixer']} },
+    { id:74, name:"Tanqueray",             desc:'Classic London Dry. 41.3% ABV. 25ml.',   price:480, emoji:'🌿', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Mediterranean Tonic','Soda','No mixer']} },
+    { id:75, name:"Brockmans",             desc:'Smooth, intensely aromatic. 40.0% ABV. 25ml.', price:510, emoji:'🫐', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Elderflower Tonic','No mixer']} },
+    { id:76, name:"Silent Pool",           desc:'Surrey artisan gin. 43.0% ABV. 25ml.',   price:560, emoji:'🌊', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Mediterranean Tonic','No mixer']} },
+    { id:77, name:"Edinburgh Rhubarb",     desc:'Fruity and zesty. 40.0% ABV. 25ml.',     price:510, emoji:'🎋', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Lemonade','No mixer']} },
+    { id:78, name:"Whitley Neill Blood Orange", desc:'Blood orange-infused gin. 41.3% ABV. 25ml.', price:500, emoji:'🍊', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Lemonade','No mixer']} },
+    { id:79, name:"Gordon's 0%",           desc:'Alcohol-free. 0.0% ABV. 25ml.',          price:430, emoji:'🌿', allergens:[], options:{label:'Mixer', choices:['Indian Tonic','Slimline Tonic','Mediterranean Tonic','Elderflower Tonic','Soda','No mixer']} },
+  ]},
+  { id:'vodka_rum', name:'Vodka & Rum', emoji:'🍹', items:[
+    { id:80, name:'Smirnoff',              desc:'Classic vodka. 37.5% ABV. 25ml.',        price:460, emoji:'🧊', allergens:[], options:{label:'Mixer', choices:['Coke','Lemonade','Orange Juice','Cranberry Juice','Soda','No mixer']} },
+    { id:81, name:'Smirnoff Raspberry',    desc:'Raspberry-flavoured vodka. 37.5% ABV. 25ml.', price:470, emoji:'🍓', allergens:[], options:{label:'Mixer', choices:['Lemonade','Soda','Cranberry Juice','No mixer']} },
+    { id:82, name:'Grey Goose',            desc:'Premium French vodka. 40.0% ABV. 25ml.', price:560, emoji:'🦢', allergens:[], options:{label:'Mixer', choices:['Coke','Lemonade','Orange Juice','Cranberry Juice','Soda','No mixer']} },
+    { id:83, name:'Kraken Black Spiced',   desc:'Rich dark spiced rum. 40.0% ABV. 25ml.', price:490, emoji:'🐙', allergens:[], options:{label:'Mixer', choices:['Coke','Ginger Beer','Lemonade','Soda','No mixer']} },
+    { id:84, name:'Havana Especial',       desc:'Cuban golden rum. 37.5% ABV. 25ml.',     price:450, emoji:'🌴', allergens:[], options:{label:'Mixer', choices:['Coke','Ginger Beer','Lemonade','Soda','No mixer']} },
+    { id:85, name:'Bacardi',               desc:'Light white rum. 37.5% ABV. 25ml.',      price:460, emoji:'🦇', allergens:[], options:{label:'Mixer', choices:['Coke','Lemonade','Orange Juice','Soda','No mixer']} },
+    { id:86, name:"Sailor Jerry",          desc:'Spiced rum. 40.0% ABV. 25ml.',           price:460, emoji:'⚓', allergens:[], options:{label:'Mixer', choices:['Coke','Ginger Beer','Lemonade','Soda','No mixer']} },
+  ]},
+  { id:'whisky', name:'Whisky & Bourbon', emoji:'🥃', items:[
+    { id:90, name:'Famous Grouse',         desc:'Smooth blended Scotch. 40.0% ABV. 25ml.', price:460, emoji:'🦅', allergens:[], options:{label:'Serve', choices:['Neat','On the rocks','With water','With ginger ale','With Coke']} },
+    { id:91, name:'Jack Daniels',          desc:'Tennessee whiskey. 40.0% ABV. 25ml.',    price:470, emoji:'🍫', allergens:[], options:{label:'Serve', choices:['Neat','On the rocks','With Coke','With ginger ale']} },
+    { id:92, name:'Monkey Shoulder',       desc:'Triple malt Scotch. 40.0% ABV. 25ml.',   price:510, emoji:'🐒', allergens:[], options:{label:'Serve', choices:['Neat','On the rocks','With ginger ale','With water']} },
+    { id:93, name:'Makers Mark',           desc:'Kentucky bourbon. 45.0% ABV. 25ml.',     price:510, emoji:'🥃', allergens:[], options:{label:'Serve', choices:['Neat','On the rocks','With ginger ale','With Coke']} },
+    { id:94, name:'Jamesons',              desc:'Smooth Irish whiskey. 40.0% ABV. 25ml.', price:490, emoji:'☘️', allergens:[], options:{label:'Serve', choices:['Neat','On the rocks','With ginger ale','With Coke']} },
+    { id:95, name:'Glenfiddich',           desc:'World\'s most awarded single malt. 40.0% ABV. 25ml.', price:530, emoji:'🦌', allergens:[], options:{label:'Serve', choices:['Neat','On the rocks','With water']} },
+    { id:96, name:'Laphroaig',             desc:'Peaty Islay single malt. 40.0% ABV. 25ml.', price:560, emoji:'🌾', allergens:[], options:{label:'Serve', choices:['Neat','On the rocks','With water']} },
+  ]},
+  { id:'bottles', name:'Bottles & Cider', emoji:'🍾', items:[
+    { id:100, name:'Sol',                  desc:'Light Mexican lager. 3.4% ABV. 330ml.',  price:540, emoji:'☀️', allergens:['Gluten'], options:null },
+    { id:101, name:'Estrella',             desc:'Spanish premium lager. 4.6% ABV. 330ml.',price:540, emoji:'⭐', allergens:['Gluten'], options:null },
+    { id:102, name:'Daura (Gluten Free)',  desc:'Gluten-free lager. 5.4% ABV. 330ml.',    price:620, emoji:'🌾', allergens:[], options:null },
+    { id:103, name:'Old Mout Cider',       desc:'4.0% ABV. 500ml. Choose your flavour.',  price:720, emoji:'🍏', allergens:[], options:{label:'Flavour', choices:['Berries & Cherries','Strawberry & Apple','Kiwi & Lime']} },
+    { id:104, name:'Old Mout Cider AF',   desc:'Alcohol-free cider. 500ml.',              price:670, emoji:'🍏', allergens:[], options:{label:'Flavour', choices:['Berries & Cherries','Strawberry & Apple','Kiwi & Lime']} },
+  ]},
+  { id:'soft', name:'Soft Drinks', emoji:'🥤', items:[
+    { id:110, name:'Pepsi',                desc:'Served over ice.',                        price:400, emoji:'🥤', allergens:[], options:{label:'Size', choices:['Regular 16oz — £4.00','Large 20oz — £4.75']} },
+    { id:111, name:'Pepsi Max',            desc:'Served over ice.',                        price:400, emoji:'🥤', allergens:[], options:{label:'Size', choices:['Regular 16oz — £4.00','Large 20oz — £4.75']} },
+    { id:112, name:'Lemonade',             desc:'Served over ice.',                        price:400, emoji:'🍋', allergens:[], options:{label:'Size', choices:['Regular 16oz — £4.00','Large 20oz — £4.75']} },
+    { id:113, name:'Orange Juice',         desc:'Served over ice.',                        price:400, emoji:'🍊', allergens:[], options:{label:'Size', choices:['Regular 16oz — £4.00','Large 20oz — £4.75']} },
+    { id:114, name:'Coke Bottle',          desc:'330ml bottle.',                           price:410, emoji:'🥤', allergens:[], options:null },
+    { id:115, name:'Coke Zero Bottle',     desc:'330ml bottle.',                           price:410, emoji:'🥤', allergens:[], options:null },
+    { id:116, name:'Fevertree Tonic',      desc:'200ml. Premium botanical tonics.',        price:300, emoji:'🫧', allergens:[], options:{label:'Flavour', choices:['Premium Indian','Light','Mediterranean','Elderflower','Ginger Ale']} },
+    { id:117, name:'Fentimans',            desc:'330ml botanical soft drink.',             price:465, emoji:'🌿', allergens:[], options:{label:'Flavour', choices:['Pink Lemonade','Elderflower','Ginger Beer']} },
+    { id:118, name:'J2O',                  desc:'330ml fruit juice drink.',               price:410, emoji:'🧃', allergens:[], options:{label:'Flavour', choices:['Orange & Passionfruit','Apple & Raspberry','Apple & Mango']} },
+    { id:119, name:'Mineral Water',        desc:'330ml bottle.',                           price:325, emoji:'💧', allergens:[], options:{label:'Type', choices:['Still','Sparkling']} },
+    { id:120, name:'Appletiser',           desc:'330ml sparkling apple juice.',            price:465, emoji:'🍎', allergens:[], options:null },
+    { id:121, name:'Cordial & Soda',       desc:'',                                        price:220, emoji:'🫗', allergens:[], options:null },
+  ]},
+  { id:'hot', name:'Hot Drinks', emoji:'☕', items:[
+    { id:130, name:'Americano',            desc:'Espresso with hot water.',                price:375, emoji:'☕', allergens:[], options:{label:'Milk', choices:['Black','Whole milk','Oat milk','Soy milk']} },
+    { id:131, name:'Latte',                desc:'Espresso with steamed milk.',             price:395, emoji:'☕', allergens:['Dairy'], options:{label:'Milk', choices:['Whole milk','Oat milk','Soy milk']} },
+    { id:132, name:'Cappuccino',           desc:'Espresso with steamed and frothed milk.', price:395, emoji:'☕', allergens:['Dairy'], options:{label:'Milk', choices:['Whole milk','Oat milk','Soy milk']} },
+    { id:133, name:'Flat White',           desc:'Double espresso with microfoam milk.',    price:395, emoji:'☕', allergens:['Dairy'], options:{label:'Milk', choices:['Whole milk','Oat milk','Soy milk']} },
+    { id:134, name:'Hot Chocolate',        desc:'Rich and creamy.',                        price:395, emoji:'🍫', allergens:['Dairy'], options:null },
+    { id:135, name:'Tea Pot',              desc:'Pot of tea — choose your blend.',         price:375, emoji:'🍵', allergens:[], options:{label:'Blend', choices:['Breakfast Tea','Earl Grey','Peppermint','Chamomile','Green Tea','Decaf']} },
+    { id:136, name:'Liqueur Coffee',       desc:'Coffee with liqueur and double cream. Choose: Tia Maria, Cointreau, Courvoisier, Jameson or Morgan Spiced Rum.', price:950, emoji:'🍫', allergens:['Dairy'], options:null },
+  ]},
+  { id:'sharing', name:'Starters & Sharing', emoji:'🫕', items:[
+    { id:140, name:'Baked Camembert',      desc:'Infused with garlic, rosemary and honey, served with sourdough bread and red onion chutney. V', price:1600, emoji:'🧀', allergens:['Dairy','Gluten'], options:null },
+    { id:141, name:'Authentic Nachos',     desc:'With salsa, guacamole, cheese and sour cream. Add chilli con carne +£3.', price:1200, emoji:'🌮', allergens:['Dairy','Gluten'], options:{label:'Add-on', choices:['As is','Add Chilli con Carne +£3']} },
+    { id:142, name:'Greek Mezze',          desc:'Hummus, tzatziki, kalamata olives, feta drizzled with oil, oregano, cucumbers, tomatoes and warm pitta. V', price:1600, emoji:'🫒', allergens:['Dairy','Gluten'], options:null },
+    { id:143, name:'Garlicky Gambas',      desc:'King prawns cooked in garlic and chilli, served with focaccia to dip in the sauce.', price:1250, emoji:'🦐', allergens:['Shellfish','Gluten'], options:null },
+    { id:144, name:'Shakshuka with Feta',  desc:'Eggs poached in a tomato and pepper sauce with feta, served with flatbread. V', price:800, emoji:'🍳', allergens:['Eggs','Dairy','Gluten'], options:null },
+    { id:145, name:'Tandoori Chicken Skewers', desc:'Served on corn wraps with salad.',   price:1200, emoji:'🍢', allergens:['Gluten'], options:null },
+    { id:146, name:'Peri Peri Fries',      desc:'Loaded with peri peri chicken, mozzarella and jalapeños.',                  price:900, emoji:'🌶️', allergens:['Dairy','Gluten'], options:null },
+    { id:147, name:'Soup of the Day',      desc:'Ask your server for today\'s soup. Served with bread.',                     price:600, emoji:'🍵', allergens:['Gluten'], options:null },
+  ]},
+  { id:'mains', name:'Mains & Burgers', emoji:'🍔', items:[
+    { id:150, name:'Authentic Burger',     desc:'Beef patty, bacon, Monterey Jack, cos, tomato, mayo, relish. Served with fries.', price:1700, emoji:'🍔', allergens:['Gluten','Dairy','Eggs'], options:{label:'Cook', choices:['Medium','Well Done']} },
+    { id:151, name:'Zingy Burger',         desc:'Fried chicken, spicy cheese, BBQ sauce, onion rings, cos, tomato, Sriracha mayo. Served with fries.', price:1800, emoji:'🍔', allergens:['Gluten','Dairy','Eggs'], options:null },
+    { id:152, name:'Vegan Burger',         desc:'Co lettuce, beef tomato, vegan mayo and cheese. Served with sweet potato fries. VE', price:1700, emoji:'🌿', allergens:['Gluten'], options:null },
+    { id:153, name:'Pan Fried Salmon',     desc:'With Yorkshire pudding, roast potatoes, seasonal vegetables and gravy.',    price:2000, emoji:'🐟', allergens:['Fish','Dairy'], options:null },
+    { id:154, name:'Fish & Chips',         desc:'Beer-battered haddock, garden peas, tartare sauce and chips.',              price:1800, emoji:'🐠', allergens:['Gluten','Fish','Eggs'], options:null },
+    { id:155, name:'Chicken Kiev',         desc:'With roast potatoes, seasonal vegetables and cranberry sauce.',              price:1800, emoji:'🍗', allergens:['Gluten','Dairy','Eggs'], options:null },
+    { id:156, name:'Sirloin Steak',        desc:'With Yorkshire pudding, roast potatoes, seasonal veg and gravy. Garnished with truffle & parmesan.', price:2800, emoji:'🥩', allergens:['Dairy','Gluten'], options:{label:'Cook', choices:['Rare','Medium Rare','Medium','Well Done']} },
+    { id:157, name:'Pasta of the Day',     desc:'Changes daily — ask your server what the special is.',                      price:1200, emoji:'🍝', allergens:['Gluten','Dairy','Eggs'], options:null },
+  ]},
+  { id:'sides', name:'Sides', emoji:'🍟', items:[
+    { id:160, name:'Chips',                desc:'Classic pub chips.',                      price:500, emoji:'🍟', allergens:[], options:null },
+    { id:161, name:'Truffle Chips',        desc:'With parmesan shavings and truffle oil.', price:700, emoji:'🍟', allergens:['Dairy'], options:null },
+    { id:162, name:'Sweet Potato Fries',   desc:'',                                        price:600, emoji:'🍟', allergens:[], options:null },
+    { id:163, name:'Halloumi Fries',       desc:'With sweet chilli sauce.',                price:800, emoji:'🧀', allergens:['Dairy'], options:null },
+    { id:164, name:'Onion Rings',          desc:'Crispy beer-battered onion rings.',       price:500, emoji:'🧅', allergens:['Gluten'], options:null },
+    { id:165, name:'Side Salad',           desc:'Fresh garden salad.',                     price:600, emoji:'🥗', allergens:[], options:null },
+    { id:166, name:'Boston Bean',          desc:'Classic baked beans.',                    price:500, emoji:'🫘', allergens:[], options:null },
+  ]},
+  { id:'desserts', name:'Desserts', emoji:'🍮', items:[
+    { id:170, name:'Crumble of the Day',   desc:'With custard. Ask your server for today\'s flavour.',                      price:700, emoji:'🫐', allergens:['Gluten','Dairy','Eggs'], options:null },
+    { id:171, name:'Warm Chocolate Brownie', desc:'With Very Cherry ice cream.',                                            price:700, emoji:'🍫', allergens:['Gluten','Dairy','Eggs'], options:null },
+    { id:172, name:'Sticky Toffee Pudding', desc:'With clotted cream vanilla ice cream and caramel sauce.',                price:700, emoji:'🍮', allergens:['Gluten','Dairy','Eggs'], options:null },
+    { id:173, name:'3 Scoops Italian Ice Cream', desc:'Real dairy ice cream. Vanilla Bean, Chocolate or Strawberry.',     price:700, emoji:'🍨', allergens:['Dairy','Eggs'], options:{label:'Flavours', choices:['Vanilla Bean','Chocolate','Strawberry','Mix of all three']} },
+    { id:174, name:'Magnum Ice Cream',     desc:'Classic Magnum bar.',                                                      price:275, emoji:'🍫', allergens:['Dairy'], options:null },
+    { id:175, name:'Cheese & Crackers',    desc:'Taw Valley Cheddar, Cheshire with Cranberries, Tuxford & Tebbutt Blue Stilton, Fig & Ale Chutney.', price:950, emoji:'🧀', allergens:['Dairy','Gluten'], options:null },
+  ]},
+  { id:'snacks', name:'Bar Snacks', emoji:'🧀', items:[
+    { id:180, name:'Walkers Crisps',       desc:'Choose your flavour.',                    price:200, emoji:'🥔', allergens:[], options:{label:'Flavour', choices:['Prawn Cocktail','Salt & Vinegar','Cheese & Onion','Ready Salted']} },
+    { id:181, name:"Nobby's Nuts",         desc:'Salted, Chilli or Dry Roasted.',          price:195, emoji:'🥜', allergens:['Nuts'], options:{label:'Flavour', choices:['Salted','Chilli','Dry Roasted']} },
+    { id:182, name:'Pork Scratchings',     desc:'Traditional pub pork scratchings.',       price:250, emoji:'🐷', allergens:[], options:null },
+    { id:183, name:'Mini Cheddars',        desc:'Classic Mini Cheddars.',                  price:250, emoji:'🧀', allergens:['Dairy','Gluten'], options:null },
+  ]},
+];
+
+// ═══════════════════════════════════════════════════════
+// MENU GROUPS (top-level navigation)
+// ═══════════════════════════════════════════════════════
+const GROUPS = {
+  drinks: {
+    name: 'Drinks',
+    emoji: '🍺',
+    cats: ['draught','cocktails','low_no','wine','gin','vodka_rum','whisky','bottles','soft','hot']
+  },
+  food: {
+    name: 'Food',
+    emoji: '🍔',
+    cats: ['sharing','mains','sides','desserts']
+  },
+  snacks: {
+    name: 'Snacks',
+    emoji: '🧀',
+    cats: ['snacks']
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let basket = [], currentVenue = null, currentItem = null;
+let currentQty = 1, selectedOpt = 0, orderCounter = 46;
+let currentCat = MENU[0].id;
+let currentGroup = 'drinks';
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  if (screen === 'basket')   renderBasket();
+  if (screen === 'checkout') renderCheckout();
+  if (screen === 'subcats')  renderSubcats();
+  if (screen === 'menu')     renderMenu();
+}
+
+function selectVenue(key) {
+  currentVenue = key;
+  const v = VENUES[key];
+  // Group screen header
+  const glb = document.getElementById('groupHeaderLogoBox');
+  glb.className = 'screen-header-logo ' + v.logoBg;
+  document.getElementById('groupHeaderLogoImg').src = v.logo;
+  document.getElementById('groupVenueName').textContent = v.name;
+  document.getElementById('groupTableLabel').textContent = v.table;
+  // Labels for other screens
+  document.getElementById('subcatVenueLabel').textContent = v.name + ' · ' + v.table;
+  document.getElementById('menuVenueLabel').textContent = v.name + ' · ' + v.table;
+  document.getElementById('basketVenueLabel').textContent = v.name + ' · ' + v.table;
+  document.getElementById('basketTableInfo').innerHTML = v.table + ' &nbsp;·&nbsp; <strong>' + v.name + '</strong>';
+  basket = []; updateBasketUI();
+  goTo('groups');
+}
+
+function openGroup(groupKey) {
+  currentGroup = groupKey;
+  const g = GROUPS[groupKey];
+  document.getElementById('subcatGroupLabel').textContent = g.name;
+  goTo('subcats');
+}
+
+function renderSubcats() {
+  const g = GROUPS[currentGroup];
+  const cats = MENU.filter(c => g.cats.includes(c.id));
+  document.getElementById('subcatGrid').innerHTML = cats.map(cat => `
+    <div class="subcat-card" onclick="openSubcat('${cat.id}')">
+      <div class="subcat-card-emoji">${cat.emoji}</div>
+      <div class="subcat-card-name">${cat.name}</div>
+      <div class="subcat-card-count">${cat.items.length} items</div>
+    </div>`).join('');
+}
+
+function openSubcat(id) {
+  currentCat = id;
+  const cat = MENU.find(c => c.id === id);
+  document.getElementById('menuCatLabel').textContent = cat.name;
+  goTo('menu');
+}
+
+// ═══════════════════════════════════════════════════════
+// MENU RENDER
+// ═══════════════════════════════════════════════════════
+function renderMenu() {
+  document.getElementById('catTabs').innerHTML = MENU.map(cat =>
+    `<button class="cat-tab ${cat.id===currentCat?'active':''}" onclick="switchCat('${cat.id}')">${cat.emoji} ${cat.name}</button>`
+  ).join('');
+  renderCat(currentCat);
+  updateBasketUI();
+}
+
+function switchCat(id) {
+  currentCat = id;
+  document.querySelectorAll('.cat-tab').forEach((el,i) => el.classList.toggle('active', MENU[i].id===id));
+  const cat = MENU.find(c => c.id === id);
+  document.getElementById('menuCatLabel').textContent = cat.name;
+  renderCat(id);
+}
+
+function renderCat(id) {
+  const cat = MENU.find(c => c.id===id);
+  document.getElementById('menuContent').innerHTML = `
+    <div class="menu-section">
+      <div class="menu-section-title">${cat.emoji} &nbsp; ${cat.name}</div>
+      ${cat.items.map(item => `
+        <div class="menu-item" onclick="openItem(${item.id})">
+          <div class="item-icon">${item.emoji}</div>
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-desc">${item.desc || '&nbsp;'}</div>
+            <div class="item-footer">
+              <span class="item-price">${fmt(item.price)}</span>
+              <div class="atags">${item.allergens.slice(0,2).map(a=>`<span class="atag">${a}</span>`).join('')}</div>
+            </div>
+          </div>
+          <button class="add-btn" onclick="event.stopPropagation();quickAdd(${item.id})">+</button>
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('menuScrollArea').scrollTop = 0;
+}
+
+// ═══════════════════════════════════════════════════════
+// ITEM MODAL
+// ═══════════════════════════════════════════════════════
+function openItem(id) {
+  const item = findItem(id);
+  currentItem = item; currentQty = 1; selectedOpt = 0;
+  document.getElementById('modalEmoji').textContent = item.emoji;
+  document.getElementById('modalName').textContent  = item.name;
+  document.getElementById('modalPrice').textContent = fmt(item.price);
+  document.getElementById('modalDesc').textContent  = item.desc;
+  document.getElementById('modalNotes').value = '';
+  document.getElementById('modalQty').textContent = 1;
+  document.getElementById('modalSub').textContent = fmt(item.price);
+  document.getElementById('modalOptions').innerHTML = item.options
+    ? `<div class="modal-sec-label">${item.options.label}</div>
+       <div class="option-row">${item.options.choices.map((c,i)=>`<button class="option-chip ${i===0?'selected':''}" onclick="selOpt(${i},this)">${c}</button>`).join('')}</div>`
+    : '';
+  document.getElementById('modalAllergens').innerHTML = item.allergens.length
+    ? `<div class="modal-sec-label">Contains</div>
+       <div class="allergen-list">${item.allergens.map(a=>`<span class="allergen-chip">⚠️ ${a}</span>`).join('')}</div>`
+    : '';
+  document.getElementById('itemModal').classList.add('show');
+}
+
+function closeModal(e) { if (e.target===document.getElementById('itemModal')) document.getElementById('itemModal').classList.remove('show'); }
+function selOpt(i, el) { selectedOpt=i; document.querySelectorAll('.option-chip').forEach((c,j)=>c.classList.toggle('selected',j===i)); }
+function chgQty(d) { currentQty=Math.max(1,currentQty+d); document.getElementById('modalQty').textContent=currentQty; document.getElementById('modalSub').textContent=fmt(currentItem.price*currentQty); }
+
+// ═══════════════════════════════════════════════════════
+// BASKET LOGIC — consolidated lines
+// ═══════════════════════════════════════════════════════
+function pushToBasket(item, qty, option, notes) {
+  if (!notes) {
+    const key = item.id+'|'+(option||'');
+    const ex = basket.find(b => b.itemId===item.id && b.option===option && !b.notes);
+    if (ex) { ex.qty += qty; return; }
+  }
+  basket.push({ itemId:item.id, name:item.name, emoji:item.emoji, price:item.price, qty, notes, option });
+}
+
+function addToBasket() {
+  const notes = document.getElementById('modalNotes').value.trim();
+  const opt = currentItem.options ? currentItem.options.choices[selectedOpt] : null;
+  pushToBasket(currentItem, currentQty, opt, notes);
+  document.getElementById('itemModal').classList.remove('show');
+  updateBasketUI(); flashBasket();
+}
+
+function quickAdd(id) { pushToBasket(findItem(id), 1, null, ''); updateBasketUI(); flashBasket(); }
+
+function flashBasket() {
+  const b = document.querySelector('.basket-btn');
+  b.style.background = '#2E7D32';
+  setTimeout(() => { b.style.background = 'var(--amber)'; }, 500);
+}
+
+function adjustBasket(idx, d) {
+  basket[idx].qty += d;
+  if (basket[idx].qty <= 0) basket.splice(idx, 1);
+  updateBasketUI(); renderBasket();
+}
+
+function updateBasketUI() {
+  const count = basket.reduce((s,i) => s+i.qty, 0);
+  const total = basketTotal();
+  ['basketCountGroup','basketCountSubcat','basketCountMenu'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = count; el.classList.toggle('show', count > 0); }
+  });
+  document.getElementById('barCount').textContent = count;
+  document.getElementById('barTotal').textContent = fmt(total);
+  document.getElementById('basketBar').classList.toggle('show', count > 0);
+}
+
+function basketTotal() { return basket.reduce((s,i) => s + i.price*i.qty, 0); }
+
+// ═══════════════════════════════════════════════════════
+// BASKET SCREEN
+// ═══════════════════════════════════════════════════════
+function renderBasket() {
+  const el = document.getElementById('basketItems');
+  if (!basket.length) {
+    el.innerHTML = `<div class="empty-basket"><div class="ico">🛒</div><h3>Your basket is empty</h3><p>Head back to the menu to add some drinks or food.</p></div>`;
+    document.getElementById('basketTotals').innerHTML = '';
+    document.getElementById('checkoutBtn').style.display = 'none';
+    return;
+  }
+  document.getElementById('checkoutBtn').style.display = 'block';
+  el.innerHTML = basket.map((bi,idx) => `
+    <div class="basket-item">
+      <div class="bi-icon">${bi.emoji}</div>
+      <div class="bi-info">
+        <div class="bi-name">${bi.name}</div>
+        <div class="bi-opts">${[bi.option,bi.notes].filter(Boolean).join(' · ') || '&nbsp;'}</div>
+      </div>
+      <div class="bi-right">
+        <div class="bi-price">${fmt(bi.price*bi.qty)}</div>
+        <div class="bi-qty">
+          <button class="bq-btn" onclick="adjustBasket(${idx},-1)">−</button>
+          <span class="bq-num">${bi.qty}</span>
+          <button class="bq-btn" onclick="adjustBasket(${idx},1)">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+  const sub = basketTotal(), svc = Math.round(sub*0.10), total = sub+svc;
+  document.getElementById('basketTotals').innerHTML = `
+    <div class="basket-totals">
+      <div class="total-row"><span class="lbl">Subtotal</span><span class="val">${fmt(sub)}</span></div>
+      <div class="total-row"><span class="lbl">Optional service charge (10%)</span><span class="val">${fmt(svc)}</span></div>
+      <div class="total-row grand"><span class="lbl">Total</span><span class="val">${fmt(total)}</span></div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// CHECKOUT
+// ═══════════════════════════════════════════════════════
+function renderCheckout() {
+  const sub = basketTotal(), svc = Math.round(sub*0.10), total = sub+svc;
+  document.getElementById('checkoutSummary').innerHTML = `
+    <h3>Order Summary</h3>
+    ${basket.map(b=>`<div class="sum-row"><span class="n">${b.name} ×${b.qty}</span><span>${fmt(b.price*b.qty)}</span></div>`).join('')}
+    <hr class="sum-divider">
+    <div class="sum-row"><span class="n">Service charge (10%)</span><span>${fmt(svc)}</span></div>
+    <hr class="sum-divider">
+    <div class="sum-total"><span>Total</span><span>${fmt(total)}</span></div>`;
+  document.getElementById('payTotal').textContent = fmt(total);
+}
+
+function selectPay(m) {
+  ['card','apple','google'].forEach(x => document.getElementById('pay'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('selected',x===m));
+  document.getElementById('cardFields').style.display = m==='card' ? 'block' : 'none';
+  const t = document.getElementById('payTotal').textContent;
+  document.getElementById('payBtnLabel').innerHTML =
+    m==='card'  ? `Pay <span id="payTotal">${t}</span>`
+    : m==='apple'  ? `🍎 &nbsp;Pay with Apple Pay`
+    : `G &nbsp;Pay with Google Pay`;
+}
+
+function fmtCard(i) { let v=i.value.replace(/\D/g,'').substring(0,16); i.value=v.replace(/(.{4})/g,'$1  ').trim(); }
+function fmtExp(i)  { let v=i.value.replace(/\D/g,''); if(v.length>=2) v=v.slice(0,2)+' / '+v.slice(2,4); i.value=v; }
+
+function processPayment() {
+  document.getElementById('payBtnLabel').style.display = 'none';
+  document.getElementById('paySpinner').classList.add('show');
+  document.getElementById('payBtn').style.opacity = '0.6';
+  setTimeout(() => {
+    orderCounter++;
+    const v = VENUES[currentVenue];
+    document.getElementById('orderNum').textContent = '#APC-' + String(orderCounter).padStart(4,'0');
+    document.getElementById('confirmMsg').innerHTML = `Your order is with the team.<br>We'll bring it to ${v.table}.`;
+    basket = []; updateBasketUI();
+    document.getElementById('payBtnLabel').style.display = '';
+    document.getElementById('paySpinner').classList.remove('show');
+    document.getElementById('payBtn').style.opacity = '';
+    goTo('confirm'); startTracker();
+  }, 2200);
+}
+
+// ═══════════════════════════════════════════════════════
+// TRACKER
+// ═══════════════════════════════════════════════════════
+function startTracker() {
+  ['step1','step2','step3'].forEach(id => { const e=document.getElementById(id); e.className='tracker-step pending'; e.querySelector('.step-icon').textContent='○'; });
+  setTimeout(() => { const s=document.getElementById('step1'); s.className='tracker-step done'; s.querySelector('.step-icon').textContent='✓'; s.querySelector('.step-sub').textContent='Payment confirmed · just now'; }, 400);
+  setTimeout(() => { const s=document.getElementById('step2'); s.className='tracker-step active'; s.querySelector('.step-icon').textContent='🍺'; }, 1200);
+  setTimeout(() => {
+    const s2=document.getElementById('step2'); s2.className='tracker-step done'; s2.querySelector('.step-icon').textContent='✓'; s2.querySelector('.step-sub').textContent='Prepared · just now';
+    const s3=document.getElementById('step3'); s3.className='tracker-step active'; s3.querySelector('.step-icon').textContent='🪑'; s3.querySelector('.step-sub').textContent='On its way to your table!';
+  }, 7000);
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+function findItem(id) { for(const c of MENU){const i=c.items.find(x=>x.id===id);if(i)return i;} }
+function fmt(p) { return '£'+(p/100).toFixed(2); }
+
+</script>
+</body>
+</html>
